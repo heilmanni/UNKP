@@ -1,18 +1,19 @@
-#ezek a f¸ggvÈnyek sima plotot, illetve dygraphot kÈszÌtenek
+#ezek a f√ºggv√©nyek sima plotot, illetve dygraphot k√©sz√≠tenek
+#ehhez olyan adatf√°jl kell megadni, ami tartalmaz "D√°tum" √©s "√Åtlag" oszlopokat
 
 simple_plot <- function(adat)
 {
-  plot(x = adat$`D·tum`, y = adat$¡tlag, type = "l",
-       xlab = "D·tum", ylab = "¡tlag", 
-       main = "A hÌrport·l adatainak ·tlagos hangulatvil·ga")
+  plot(x = adat$`D√°tum`, y = adat$√Åtlag, type = "l",
+       xlab = "D√°tum", ylab = "√Åtlag", 
+       main = "A h√≠rport√°l adatainak √°tlagos hangulatvil√°ga")
 }
 
 dyplot <- function(adat){
-  adat$D·tum <- as.numeric(c(adat$D·tum))
-  dygraph(data = adat, main = "A hÌrport·l adatainak ·tlagos hangulatvil·ga") %>% 
+  adat$D√°tum <- as.numeric(c(adat$D√°tum))
+  dygraph(data = adat, main = "A h√≠rport√°l adatainak √°tlagos hangulatvil√°ga") %>% 
     dyRangeSelector(fillColor = "grey") %>% 
-    dyAxis("x", label = "D·tum", axisLabelFontSize=20,labelWidth=30, axisLabelWidth=60) %>% 
-    dyAxis("y", label = "Havi ·tlag tÌzszerese", axisLabelFontSize=20,labelWidth=20, axisLabelWidth=50)
+    dyAxis("x", label = "D√°tum", axisLabelFontSize = 20,labelWidth = 30, axisLabelWidth = 60) %>% 
+    dyAxis("y", label = "Havi √°tlag t√≠zszerese", axisLabelFontSize = 20,labelWidth = 20, axisLabelWidth = 50)
 }
 
 
