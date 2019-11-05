@@ -1,17 +1,18 @@
-#ez a függvény elvégzi a hangulatelemzést
+#ez a fÃ¼ggvÃ©ny elvÃ©gzi a hangulatelemzÃ©st
+#ehhez egy adatfÃ¡jlt kell megadni, ami tartalmaz "cim" oszlopot, Ã©s az szavakat tartalmaz
 
 sentiment_points <- function(adat){
-  adat$id <- row.names(adat) #azonosítóval látja el a sorokat
+  adat$id <- row.names(adat) #azonosÃ­tÃ³val lÃ¡tja el a sorokat
   
   words <- unnest_tokens(tbl = adat, output = word, input = cim) #a cimeket szavakra bontja
-  words$word %>% removeWords(stopwords("hungarian")) %>% removeNumbers()  -> words$word #kiveszi a számokat és a töltelékszavakat
-  words2 <- left_join(words, sentimentdic, by="word") #szavak alapján összeköti a szentimentszótárral
-  words2$point <- ifelse(is.na(words2$point), 0, words2$point) #NA-t 0-ra cseréli
-  words2 <- subset(words2, !words2$point == "hiba") #a hiba sorok kivétele
-  words2$point <- as.numeric(words2$point) #numerikus értelmezés
+  words$word %>% removeWords(stopwords("hungarian")) %>% removeNumbers()  -> words$word #kiveszi a (magyar nyelvÅ±) tÃ¶ltelÃ©kszavakat Ã©s szÃ¡mokat - ezek helyÃ©re majd "hiba" kerÃ¼l, nem NA
+  words2 <- left_join(words, sentimentdic, by="word") #szavak egyezÅ‘sÃ©ge alapjÃ¡n Ã¶sszekÃ¶ti a szentimentszÃ³tÃ¡rral (Ã¼res sorok "hiba" feliratot kapnak)
+  words2$point <- ifelse(is.na(words2$point), 0, words2$point) #NA-t 0-ra cserÃ©li
+  words2 <- subset(words2, !words2$point == "hiba") #a "hiba" sorok kivÃ©tele
+  words2$point <- as.numeric(words2$point) #numerikus Ã©rtelmezÃ©s
   
-  final <- words2 %>% group_by(id) %>% summarize(score=mean(point)) #id szerint csoportosítás, átlagpontszámítás
-  adat <- left_join(adat, final, by="id") #visszaírás az eredeti adattáblába
+  final <- words2 %>% group_by(id) %>% summarize(score=mean(point)) #id szerint csoportosÃ­tÃ¡s, Ã¡tlagpontszÃ¡mÃ­tÃ¡s
+  adat <- left_join(adat, final, by="id") #visszaÃ­rÃ¡s az eredeti adattÃ¡blÃ¡ba
   
   return(adat)
 }
