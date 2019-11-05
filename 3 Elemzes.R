@@ -8,36 +8,37 @@ library(stringr)
 library(tidyverse)
 library(dygraphs)
 
-#Creating a sentiment dictinary from a two text files - just importing
-Negative$point <- -1 #negatÌvhoz -1 rendelve
+#Szentimentsz√≥t√°r l√©trehoz√°sa - m√°r csak be kell import√°lni
+Negative$point <- -1 #negat√≠vhoz -1 rendelve
 Positive$point <- 1 #pozitivhoz +1 rendelve
-sentimentdic <- rbind(Negative, Positive) #egybekˆtve
+sentimentdic <- rbind(Negative, Positive) #egybek√∂tve
 colnames(sentimentdic) <- c("word", "point") #oszlopok elnevezve
 
-#creating an extra row - later itt will be useful
+#egy extra sor hozz√°ad√°sa, k√©s≈ëbb m√©g hasznos lesz
 sentimentdic[7689,] <- c("", "hiba")
 
 #-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
-#adatok beimport·l·sa, tisztÌt·sa
+#adatok beimport√°l√°sa, tiszt√≠t√°sa
 origo <- cikkcimek
 origo$cim <- as.character(origo$cim)
-origo$theDate_ev <- as.numeric(origo$theDate_ev)+ 1999 #sajnos valamiÈrt 1-nÈl indul 2000 helyett, illetve factorkÈnt kezeli numeric helyett
+origo$theDate_ev <- as.numeric(origo$theDate_ev)+ 1999 #sajnos valami√©rt 1-n√©l indul 2000 helyett, illetve factork√©nt kezeli numeric helyett
 origo$theDate_honap <- as.numeric(origo$theDate_honap)
 origo$theDate_nap <- as.numeric(origo$theDate_nap)
-colnames(origo) <- c("…v", "HÛnap", "Nap", "cim")
+colnames(origo) <- c("√âv", "H√≥nap", "Nap", "cim") #oszlopok elnevez√©se
 
-#sentiment_points f¸ggvÈnyt be kell source-olni
+#sentiment_points f√ºggv√©nyt be kell source-olni
 origo <- sentiment_points(origo)
 
-#ÈvenkÈnti bont·sban kellene vizsg·lni a hangulatv·ltoz·st
+#√©vi √©s havi bont√°sban kellene vizsg√°lni a hangulatv√°ltoz√°st
 #be kell source-olni az atlagokat
 evi_origo <- evi_atlagok(origo)
 havi_origo <- havi_atlagok(origo)
-#l·tv·nyosabb k¸lˆnbsÈgÈrt
-evi_origo$¡tlag <- evi_origo$¡tlag*10
-havi_origo$¡tlag <- havi_origo$¡tlag*10
+#l√°tv√°nyosabb k√ºl√∂nbs√©g√©rt
+evi_origo$√Åtlag <- evi_origo$√Åtlag*10
+havi_origo$√Åtlag <- havi_origo$√Åtlag*10
 
-#plottol·s
+#plottol√°s
+#be kell source-olni a simple_plot √©s dyplot f√ºggv√©nyt
 simple_plot(havi_origo)
 simple_plot(evi_origo)
 
@@ -46,30 +47,32 @@ dyplot(evi_origo)
 dyplot(havi_origo)
 
 #%>% dyAxis("x", valueFormatter = "function(v){return (as.Date(v).format(%Y-%m-%d))}")
+#sajnos a tengelyeket nem tudtam d√°tumform√°j√∫ra elnevezni
 
 #-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 #INDEX
-#adatok beimport·l·sa, finomÌt·sa
+#adatok beimport√°l√°sa, finom√≠t√°sa
 index <- index_cikkek
 index$cim <- as.character(index$cim)
+#a d√°tumot sz√©tv√°lasztom h√°rom oszlopra, ut√°na t√∂rl√∂m a d√°tum oszlopot
 index$ev <- as.numeric(substr(index$theDate, 1, 4))
 index$honap <- as.numeric(substr(index$theDate, 6, 7))
 index$nap <- as.numeric(substr(index$theDate, 9, 10))
 index <- index[, 2:5]
-colnames(index) <- c("cim", "…v", "HÛnap", "Nap")
+colnames(index) <- c("cim", "√âv", "H√≥nap", "Nap")
 
-#szentimenetelemzÈs f¸ggvÈnnyel
+#szentimenetelemz√©s f√ºggv√©nnyel
 index <- sentiment_points(index)
 
-#ÈvenkÈnti bont·sban kellene vizsg·lni a hangulatv·ltoz·st
-#k¸lˆn f¸ggvÈnyben megÌrva a havi Ès Èves ·tlag
+#√©venk√©nti bont√°sban kellene vizsg√°lni a hangulatv√°ltoz√°st
+#k√ºl√∂n f√ºggv√©nyben meg√≠rva a havi √©s √©ves √°tlag
 evi_index <- evi_atlagok(index)
 havi_index <- havi_atlagok(index)
-#l·tv·nyosabb k¸lˆnbsÈgÈrt
-evi_index$¡tlag <- evi_index$¡tlag*10
-havi_index$¡tlag <- havi_index$¡tlag*10
+#l√°tv√°nyosabb k√ºl√∂nbs√©g√©rt
+evi_index$√Åtlag <- evi_index$√Åtlag*10
+havi_index$√Åtlag <- havi_index$√Åtlag*10
 
-#plottol·s
+#plottol√°s
 simple_plot(havi_index)
 simple_plot(evi_index)
 
