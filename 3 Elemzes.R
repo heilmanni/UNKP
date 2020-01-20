@@ -1,24 +1,25 @@
 library(tm)
 library(dplyr)
-library(SnowballC)
-library(wordcloud)
 library(tidytext)
 library(textdata)
 library(stringr)
 library(tidyverse)
 library(dygraphs)
+library(tseries)
 
-#Szentimentszótár létrehozása - már csak be kell importálni
+#Szentimentszótár létrehozása - már csak be kell importálni!
 Negative$point <- -1 #negatívhoz -1 rendelve
 Positive$point <- 1 #pozitivhoz +1 rendelve
 sentimentdic <- rbind(Negative, Positive) #egybekötve
 colnames(sentimentdic) <- c("word", "point") #oszlopok elnevezve
+
 
 #egy extra sor hozzáadása, később még hasznos lesz
 sentimentdic[7689,] <- c("", "hiba")
 
 #-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 #adatok beimportálása, tisztítása
+#adatfájl: Origo_cimek
 origo <- cikkcimek
 origo$cim <- as.character(origo$cim)
 origo$theDate_ev <- as.numeric(origo$theDate_ev)+ 1999 #sajnos valamiért 1-nél indul 2000 helyett, illetve factorként kezeli numeric helyett
@@ -34,8 +35,6 @@ origo <- sentiment_points(origo)
 evi_origo <- evi_atlagok(origo)
 havi_origo <- havi_atlagok(origo)
 #látványosabb különbségért
-evi_origo$Átlag <- evi_origo$Átlag*10
-havi_origo$Átlag <- havi_origo$Átlag*10
 
 #plottolás
 #be kell source-olni a simple_plot és dyplot függvényt
@@ -46,12 +45,12 @@ simple_plot(evi_origo)
 dyplot(evi_origo)
 dyplot(havi_origo)
 
-#%>% dyAxis("x", valueFormatter = "function(v){return (as.Date(v).format(%Y-%m-%d))}")
-#sajnos a tengelyeket nem tudtam dátumformájúra elnevezni
+adf.test(havi_origo$Átlag)
 
 #-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 #INDEX
 #adatok beimportálása, finomítása
+#adatfájl: Index_cikkek
 index <- index_cikkek
 index$cim <- as.character(index$cim)
 #a dátumot szétválasztom három oszlopra, utána törlöm a dátum oszlopot
@@ -68,9 +67,6 @@ index <- sentiment_points(index)
 #külön függvényben megírva a havi és éves átlag
 evi_index <- evi_atlagok(index)
 havi_index <- havi_atlagok(index)
-#látványosabb különbségért
-evi_index$Átlag <- evi_index$Átlag*10
-havi_index$Átlag <- havi_index$Átlag*10
 
 #plottolás
 simple_plot(havi_index)
@@ -79,3 +75,46 @@ simple_plot(evi_index)
 #dygraphs
 dyplot(evi_index)
 dyplot(havi_index)
+
+adf.test(havi_index$Átlag)
+
+#-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+#INDEX GAZDASÁG
+#adatfájl: Index_Gazdasag
+index_gazd <- index_gazdasag_2
+index_gazd$cim <- as.character(index_gazd$cim)
+#a dátumot szétválasztom három oszlopra, utána törlöm a dátum oszlopot
+index_gazd$ev <- as.numeric(substr(index_gazd$theDate, 1, 4))
+index_gazd$honap <- as.numeric(substr(index_gazd$theDate, 6, 7))
+index_gazd$nap <- as.numeric(substr(index_gazd$theDate, 9, 10))
+index_gazd <- index_gazd[, 2:5]
+colnames(index_gazd) <- c("cim", "Év", "Hónap", "Nap")
+
+#szentimenetelemzés függvénnyel
+index_gazd <- sentiment_points(index_gazd)
+
+#évenkénti bontásban kellene vizsgálni a hangulatváltozást
+#külön függvényben megírva a havi és éves átlag
+evi_index_gazd <- evi_atlagok(index_gazd)
+havi_index_gazd <- havi_atlagok(index_gazd)
+
+#plottolás
+simple_plot(havi_index_gazd)
+simple_plot(evi_index_gazd)
+
+#dygraphs
+dyplot(evi_index_gazd)
+dyplot(havi_index_gazd)
+
+#néhány adat
+summary(havi_index$Átlag)
+havi_index[which.min(havi_index$Átlag),]
+havi_index[which.max(havi_index$Átlag),]
+sd(havi_index$Átlag)
+sd(havi_index$Átlag)/mean(havi_index$Átlag)
+
+#hány napra van adata az idősoroknak
+origo$datum <- paste(origo$Év, origo$Hónap, origo$Nap, sep = "-")
+length(unique(havi_index$Dátum))
+length(unique(havi_index_gazd$Dátum))
+length(unique(havi_origo$Dátum))
