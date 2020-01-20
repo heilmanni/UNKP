@@ -1,23 +1,23 @@
-#ez a függvény kiszámolja adott adatok esetén egy phi és theta paraméterû függvény
-#AIC-mutatóját, illetve a Ljung-Box-teszt p-értékét
-#meg kell adni: adat (idõsorként), 
-#az ar és ma paraméter pedig a phi és theta legnagyobb értéke (0-nál nem kisebb egész)
+#ez a fÃ¼ggvÃ©ny kiszÃ¡molja adott adatok esetÃ©n egy phi Ã©s theta paramÃ©terÅ± fÃ¼ggvÃ©ny
+#AIC-mutatÃ³jÃ¡t, illetve a Ljung-Box-teszt p-Ã©rtÃ©kÃ©t
+#meg kell adni: adat (idÅ‘sorkÃ©nt), 
+#az ar Ã©s ma paramÃ©ter pedig a phi Ã©s theta legnagyobb Ã©rtÃ©ke (0-nÃ¡l nem kisebb egÃ©sz)
 
-arima_modellezes <- function(adat, ar, ma){
-  #három ideiglenes dataframe létrehozása
-  lags <- data.frame() #ez megadja majd phi és theta értékeit
-  aic <- data.frame() #ez megadja az AIC-mutatót
-  p_value_autokor <- data.frame() #ez megadja a Ljung-Box-teszt p-értékét
+arima_modellezes <- function(adat, ar, ma, d){
+  #hÃ¡rom ideiglenes dataframe lÃ©trehozÃ¡sa
+  lags <- data.frame() #ez megadja majd phi Ã©s theta Ã©rtÃ©keit
+  aic <- data.frame() #ez megadja az AIC-mutatÃ³t
+  p_value_autokor <- data.frame() #ez megadja a Ljung-Box-teszt p-Ã©rtÃ©kÃ©t
   
   for (phi in 0:ar)
   {
     for (theta in 0:ma)
     {
-      lags <- rbind(lags, c(phi, theta)) #ez megadja az adott phi és theta értékeket
-      modell <- arima(adat, order = c(phi, 0, theta)) #arima modell készítése a paraméterekkel
-      aic <- rbind(aic, AIC(modell)) #AIC-mutató
-      p_value <- Box.test(resid(modell), type = "Ljung") #Ljung-Box-teszt elvégzése (lista formátum)
-      p_value_autokor <- rbind(p_value_autokor, as.numeric(p_value[3])) #a lista p_value értéke számként értelmezve
+      lags <- rbind(lags, c(phi, theta)) #ez megadja az adott phi Ã©s theta Ã©rtÃ©keket
+      modell <- arima(adat, order = c(phi, d, theta)) #arima modell kÃ©szÃ­tÃ©se a paramÃ©terekkel
+      aic <- rbind(aic, AIC(modell)) #AIC-mutatÃ³
+      p_value <- Box.test(resid(modell), type = "Ljung") #Ljung-Box-teszt elvÃ©gzÃ©se (lista formÃ¡tum)
+      p_value_autokor <- rbind(p_value_autokor, as.numeric(p_value[3])) #a lista p_value Ã©rtÃ©ke szÃ¡mkÃ©nt Ã©rtelmezve
     }
   }
   details <- cbind(lags, aic, p_value_autokor)
