@@ -1,10 +1,9 @@
-#ez a függvény kiszámolja és tárolja adott késleltetésû Granger-tesztek p-értékét
-#y a magyaérzott idõsor, x és annak késleltetettjei a magyarázó változók
-#mindkét idõsornak stacionernek kell lenniük
-#a max_lag a maximális késleltetések számát adja meg
+#ez a fÃ¼ggvÃ©ny kiszÃ¡molja Ã©s tÃ¡rolja adott kÃ©sleltetÃ©sÅ± Granger-tesztek p-Ã©rtÃ©kÃ©t
+#y a magyaÃ©rzott idÅ‘sor, x Ã©s annak kÃ©sleltetettjei a magyarÃ¡zÃ³ vÃ¡ltozÃ³k
+#mindkÃ©t idÅ‘sornak stacionernek kell lenniÃ¼k
+#a max_lag a maximÃ¡lis kÃ©sleltetÃ©sek szÃ¡mÃ¡t adja meg
 
 granger_test <- function(y, x, max_lag){
-  #itt lehet egy ellenõrzõ rész, hogy stacioner-e két idõsor
   
   p <- data.frame()
   
@@ -14,7 +13,7 @@ granger_test <- function(y, x, max_lag){
     szign <- ifelse (test[2,4] < 0.05, "*", "") 
     p <- rbind(p, cbind(i, test[2,4], szign))
   }
-  colnames(p) <- c("Késleltetés", "p-érték", "Szignifikancia")
+  colnames(p) <- c("KÃ©sleltetÃ©s", "p-Ã©rtÃ©k", "Szignifikancia")
   
   return(p)
 }
