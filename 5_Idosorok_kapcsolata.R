@@ -6,7 +6,7 @@ library(forecast)
 library(vars)
 
 #0. adatok importálása
-#szükséges: havi_index_gazdaság, havi_index, havi_origo, inflacio
+#szükséges: havi_index_gazdasag, havi_index, havi_origo, inflacio
 #mivel az inflációs adatok csak 2004. januártól állnak rendelkezésre, így szűkíteni kell
 havi_index_gazd <- havi_index_gazd[49:237,]
 rownames(havi_index_gazd) <- c(1:189)
