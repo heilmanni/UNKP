@@ -5,7 +5,7 @@ library(forecast)
 library(ModelMetrics)
 
 #ADATBETÖLTÉS: train és test set-ek létrehozása
-#havi_index, havi_index_gazd, havi_origo
+#adatfájlok: havi_index, havi_index_gazd, havi_origo
 #Teljes index
 havi_index_train <- havi_index[1:200,]
 havi_index_test <- havi_index[201:237,]
