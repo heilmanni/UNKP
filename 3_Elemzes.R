@@ -8,6 +8,7 @@ library(dygraphs)
 library(tseries)
 
 #Szentimentszótár létrehozása - már csak be kell importálni!
+#Adatfájl: sentiment_dictionary
 Negative$point <- -1 #negatívhoz -1 rendelve
 Positive$point <- 1 #pozitivhoz +1 rendelve
 sentimentdic <- rbind(Negative, Positive) #egybekötve
@@ -28,16 +29,21 @@ origo$theDate_nap <- as.numeric(origo$theDate_nap)
 colnames(origo) <- c("Év", "Hónap", "Nap", "cim") #oszlopok elnevezése
 
 #sentiment_points függvényt be kell source-olni
+source(file = "https://raw.githubusercontent.com/heilmanni/UNKP/master/3_sentiment_points.R")
 origo <- sentiment_points(origo)
 
 #évi és havi bontásban kellene vizsgálni a hangulatváltozást
 #be kell source-olni az atlagokat
+source(file = "https://raw.githubusercontent.com/heilmanni/UNKP/master/3_Atlagok.R")
+#ha rosszul kezeli a source-olást, akkor az a magyar karakterek miatt van benne, érdemes letölteni és úgy source-olni
 evi_origo <- evi_atlagok(origo)
 havi_origo <- havi_atlagok(origo)
 #látványosabb különbségért
 
 #plottolás
 #be kell source-olni a simple_plot és dyplot függvényt
+source(file = "https://raw.githubusercontent.com/heilmanni/UNKP/master/3_plots.R")
+#ha rosszul kezeli a source-olást, akkor az a magyar karakterek miatt van benne, érdemes letölteni és úgy source-olni
 simple_plot(havi_origo)
 simple_plot(evi_origo)
 
@@ -80,7 +86,7 @@ adf.test(havi_index$Átlag)
 
 #-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 #INDEX GAZDASÁG
-#adatfájl: Index_Gazdasag
+#adatfájl: Index_gazdasag
 index_gazd <- index_gazdasag_2
 index_gazd$cim <- as.character(index_gazd$cim)
 #a dátumot szétválasztom három oszlopra, utána törlöm a dátum oszlopot
