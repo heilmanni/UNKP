@@ -6,7 +6,7 @@ library(forecast)
 library(vars)
 
 #0. adatok importálása
-#szükséges: havi_index_gazdasag, havi_index, havi_origo, inflacio
+#szükséges: havi_index_gazdaság, havi_index, havi_origo, inflacio
 #mivel az inflációs adatok csak 2004. januártól állnak rendelkezésre, így szűkíteni kell
 havi_index_gazd <- havi_index_gazd[49:237,]
 rownames(havi_index_gazd) <- c(1:189)
@@ -94,6 +94,31 @@ summary(var_inf_gazd_8)
 var_inf_index <- vars::VAR(y = inf_index, type = "const", p = 5) #5 késleltetés esetén
 summary(var_inf_index)
 
+
+#IMPULZUSVÁLASZ-FÜGGVÉNYEK
+
+#mátrix a strukturális VAR (SVAR) modellhez
+matr <- diag(2)
+colnames(matr) <-colnames(inf_gazd_)
+rownames(matr) <-colnames(inf_gazd_)
+matr[2, 1] <- NA
+
+# SVAR becslése (így csak az inflációra való hatás jelenik meg)
+svar_inf_gazd <-SVAR(var_inf_gazd, estmethod = "direct", Amat = matr, hessian = TRUE, method="BFGS")
+svar_inf_gazd_8 <-SVAR(var_inf_gazd_8, estmethod = "direct", Amat = matr, hessian = TRUE, method="BFGS")
+svar_inf_index <-SVAR(var_inf_index, estmethod = "direct", Amat = matr, hessian = TRUE, method="BFGS")
+
+# impulzusválasz-függvények
+irf_inf_gazd <-irf(svar_inf_gazd, impulse = "havi_gazd", response = "inflacio", boot =TRUE,
+                     n.ahead = 20, cumulative = TRUE, ci = 0.66)
+irf_inf_gazd_8 <-irf(svar_inf_gazd_8, impulse = "havi_gazd", response = "inflacio", boot =TRUE,
+                     n.ahead = 20, cumulative = TRUE, ci = 0.95)
+irf_inf_index <-irf(svar_inf_index, impulse = "index", response = "inflacio", boot =TRUE,
+                     n.ahead = 20, cumulative = TRUE, ci = 0.66)
+
+plot(irf_inf_gazd)
+plot(irf_inf_gazd_8)
+plot(irf_inf_index)
 
 #KOINTEGRÁCIÓ TESZTELÉSE
 
